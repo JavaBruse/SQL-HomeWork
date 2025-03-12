@@ -104,29 +104,117 @@ ORDER BY horsepower DESC NULLS LAST;
 - Задача 1:
 
 ```sql
-
-
+SELECT
+    c.name AS car_name,
+    c.class AS car_class,
+    AVG(r.position) AS average_position,
+    COUNT(r.race) AS race_count
+FROM Cars c
+JOIN Results r ON c.name = r.car
+GROUP BY c.name, c.class
+ORDER BY average_position
 ```
+
+- Результат работы:
+
+  ![alt text](/image/db.2.1.jpg)
 
 - Задача 2:
 
 ```sql
-
-
+SELECT
+    c.name AS car_name,
+    c.class AS car_class,
+    AVG(r.position) AS average_position,
+    COUNT(r.race) AS race_count,
+	cl.country
+FROM Cars c
+JOIN Results r ON c.name = r.car
+JOIN Classes cl ON c.class = cl.class
+GROUP BY c.name, c.class, cl.country
+ORDER BY average_position ASC, c.name ASC
+LIMIT 1
 ```
+
+- Результат работы:
+
+  ![alt text](/image/db.2.2.jpg)
 
 - Задача 3:
 
 ```sql
-
+WITH ClassAvg AS (
+    SELECT
+        c.class,
+        cl.country,
+        AVG(r.position) AS avg_class_position,
+        COUNT(DISTINCT r.race) AS total_races
+    FROM Cars c
+    JOIN Results r ON c.name = r.car
+    JOIN Classes cl ON c.class = cl.class
+    GROUP BY c.class, cl.country
+),
+MinAvg AS (
+    SELECT MIN(avg_class_position) AS min_avg FROM ClassAvg
+),
+CarStats AS (
+    SELECT
+        c.name,
+        c.class,
+        cl.country,
+        AVG(r.position) AS average_position,
+        COUNT(r.race) AS race_count
+    FROM Cars c
+    JOIN Results r ON c.name = r.car
+    JOIN Classes cl ON c.class = cl.class
+    GROUP BY c.name, c.class, cl.country
+)
+SELECT cs.name as car_name, cs.class as car_class, cs.average_position, cs.race_count, cs.country as car_country, ca.total_races
+FROM CarStats cs
+JOIN ClassAvg ca ON cs.class = ca.class
+JOIN MinAvg ma ON ca.avg_class_position = ma.min_avg
+ORDER BY cs.class;
 ```
+
+- Результат работы:
+
+  ![alt text](/image/db.2.3.jpg)
 
 - Задача 4:
 
 ```sql
-
-
+WITH ClassAvg AS (
+    SELECT
+        c.class,
+        AVG(r.position) AS avg_class_position,
+        COUNT(DISTINCT c.name) AS car_count
+    FROM Cars c
+    JOIN Results r ON c.name = r.car
+    GROUP BY c.class
+    HAVING COUNT(DISTINCT c.name) > 1
+),
+CarAvg AS (
+    SELECT
+        c.name,
+        c.class,
+        cl.country,
+        AVG(r.position) AS average_position,
+        COUNT(r.race) AS race_count
+    FROM Cars c
+    JOIN Results r ON c.name = r.car
+    JOIN Classes cl ON c.class = cl.class
+    GROUP BY c.name, c.class, cl.country
+)
+SELECT ca.name as car_name, ca.class as car_class, ca.average_position, ca.race_count, ca.country as car_country
+FROM CarAvg ca
+JOIN ClassAvg cla ON ca.class = cla.class
+WHERE ca.average_position < cla.avg_class_position
+ORDER BY ca.class, ca.average_position;
 ```
+
+- Результат работы:
+
+  ![alt text](/image/db.2.4.jpg)
 
 - Задача 5:
 
