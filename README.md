@@ -15,8 +15,8 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
 - Регистрируем новый сервер
   ![alt text](/image/start.jpg)
 - Заполняем поля:
+  ![alt text](/image/config1.jpg)
   - имя
-    ![alt text](/image/config1.jpg)
   - локальный адрес компьютера.
   - порт по умлочанию
   - название DB
