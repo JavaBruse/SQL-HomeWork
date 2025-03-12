@@ -22,7 +22,7 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
   - название DB
   - имя пользователя
   - пороль
-- Сохраняем SAVE.
+- Сохраняем SAVE
   ![alt text](/image/config2.jpg)
 
 # Создание таблиц для заданий и их заполнение:
