@@ -49,6 +49,9 @@ and m.price < 20000
 and m.type = 'Sport'
 ```
 
+- Результат работы:
+  ![alt text](/image/db.1.1.jpg)
+
 - Задача 2:
 
 ```sql
@@ -78,6 +81,9 @@ AND b.price < 4000
 
 ORDER BY horsepower DESC NULLS LAST;
 ```
+
+- Результат работы:
+  ![alt text](/image/db.1.2.jpg)
 
 ## База данных 2 . Автомобильные гонки
 
