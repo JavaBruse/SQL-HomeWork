@@ -13,25 +13,36 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
 \*Предварительно его нужно скачать и устанвоить [pgAdmin](https://www.pgadmin.org/download/pgadmin-4-windows/).
 
 - Регистрируем новый сервер
+
   ![alt text](/image/start.jpg)
+
 - Заполняем поля:
+
   ![alt text](/image/config1.jpg)
+
   - имя
   - локальный адрес компьютера.
   - порт по умлочанию
   - название DB
   - имя пользователя
   - пороль
+
 - Сохраняем SAVE
+
   ![alt text](/image/config2.jpg)
 
 # Создание таблиц для заданий и их заполнение:
 
 - Открваем инструменты для отправки запросов Query Tool
+
   ![alt text](/image/work_space.jpg)
+
 - Добавляем таблицы и данные через Open File
+
   - /DATA_SQL/create_insert.db.all.sql в этом файле описаны все таблицы 4 заданий и их наполнение.
+
     - синтаксис уже переделан под PostgreSQL
+
       ![alt text](/image/add_file.jpg)
 
 # Решение задач:
@@ -50,6 +61,7 @@ and m.type = 'Sport'
 ```
 
 - Результат работы:
+
   ![alt text](/image/db.1.1.jpg)
 
 - Задача 2:
@@ -83,6 +95,7 @@ ORDER BY horsepower DESC NULLS LAST;
 ```
 
 - Результат работы:
+
   ![alt text](/image/db.1.2.jpg)
 
 ## База данных 2 . Автомобильные гонки
