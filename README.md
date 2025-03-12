@@ -19,17 +19,18 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
 - Заполняем поля:
 
   - имя
+
+    ![alt text](/image/config1.jpg)
+
   - локальный адрес компьютера.
   - порт по умлочанию
   - название DB
   - имя пользователя
   - пороль
 
-    ![alt text](/image/config1.jpg)
+    ![alt text](/image/config2.jpg)
 
 - Сохраняем SAVE
-
-  ![alt text](/image/config2.jpg)
 
 # Создание таблиц для заданий и их заполнение:
 
