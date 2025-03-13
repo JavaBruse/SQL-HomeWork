@@ -1,3 +1,14 @@
+# Проект "Базы данных"
+
+Целью проекта является закрепление знаний.
+
+# Структура:
+
+- База данных 1 транспортные средства
+- База данных 2 автомобильные гонки
+- База данных 3 бронирование отелей
+- База данных 4 структура организации
+
 # Создание БД, настройка, подключение:
 
 1 Создаем БД postgreSQL в Docker\* контейнере:
@@ -8,7 +19,7 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
 
 \*Предварительно его нужно скачать и установить [Docker.](https://www.docker.com/)
 
-2 Настройка pgAdmin
+2 Настройка pgAdmin\*
 
 \*Предварительно его нужно скачать и устанвоить [pgAdmin](https://www.pgadmin.org/download/pgadmin-4-windows/).
 
@@ -34,13 +45,13 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
 
 # Создание таблиц для заданий и их заполнение:
 
-- Открваем инструменты для отправки запросов Query Tool
+- Открываем инструменты для отправки запросов Query Tool
 
   ![alt text](/image/work_space.jpg)
 
 - Добавляем таблицы и данные через Open File
 
-  - /DATA_SQL/create_insert.db.all.sql в этом файле описаны все таблицы 4 заданий и их наполнение.
+  - /DATA_CREATE_INSERT_SQL/create_insert.db.all.sql в этом файле описаны все таблицы 4 заданий и их наполнение.
 
     - синтаксис уже переделан под PostgreSQL
 
@@ -48,54 +59,68 @@ docker run --name home_work -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postg
 
 # Решение задач:
 
+### Все решения опсаны \*.sql файлах, далее по структуре:
+
+- requesrts
+  - DB_1
+    - task_1.sql
+    - task_2.sql
+  - DB_2
+    - task_1.sql
+    - task_2.sql
+    - task_3.sql
+    - task_4.sql
+    - task_5.sql
+  - DB_3
+    - task_1.sql
+    - task_2.sql
+    - task_3.sql
+  - DB_4
+    - task_1.sql
+    - task_2.sql
+    - task_3.sql
+
 ## База данных 1. Транспортные средства.
 
 - Задача 1:
 
-```sql
-SELECT v.maker, m.model
-FROM Motorcycle m
-JOIN Vehicle v ON m.model = v.model
-where m.horsepower > 150
-and m.price < 20000
-and m.type = 'Sport'
-```
+Найдите производителей (maker) и модели всех мотоциклов, которые имеют мощность более 150 лошадиных сил, стоят менее 20 тысяч долларов и являются спортивными (тип Sport). Также отсортируйте результаты по мощности в порядке убывания.
 
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.1.1.jpg)
 
 - Задача 2:
 
-```sql
-SELECT v.maker, c.model, c.horsepower, c.engine_capacity, 'Car' AS vehicle_type
-FROM Car c
-JOIN Vehicle v ON c.model = v.model
-WHERE c.horsepower > 150
-AND c.engine_capacity < 3
-AND c.price < 35000
+Найти информацию о производителях и моделях различных типов транспортных средств (автомобили, мотоциклы и велосипеды), которые соответствуют заданным критериям.
 
-UNION ALL
+Автомобили:
+Извлечь данные о всех автомобилях, которые имеют:
 
-SELECT v.maker, m.model, m.horsepower, m.engine_capacity, 'Motorcycle' AS vehicle_type
-FROM Motorcycle m
-JOIN Vehicle v ON m.model = v.model
-WHERE m.horsepower > 150
-AND m.engine_capacity < 1.5
-AND m.price < 20000
+Мощность двигателя более 150 лошадиных сил.
+Объем двигателя менее 3 литров.
+Цену менее 35 тысяч долларов.
+В выводе должны быть указаны производитель (maker), номер модели (model), мощность (horsepower), объем двигателя (engine_capacity) и тип транспортного средства, который будет обозначен как Car.
 
-UNION ALL
+Мотоциклы:
+Извлечь данные о всех мотоциклах, которые имеют:
 
-SELECT v.maker, b.model, NULL AS horsepower, NULL AS engine_capacity, 'Bicycle' AS vehicle_type
-FROM Bicycle b
-JOIN Vehicle v ON b.model = v.model
-WHERE b.gear_count > 18
-AND b.price < 4000
+Мощность двигателя более 150 лошадиных сил.
+Объем двигателя менее 1,5 литров.
+Цену менее 20 тысяч долларов.
+В выводе должны быть указаны производитель (maker), номер модели (model), мощность (horsepower), объем двигателя (engine_capacity) и тип транспортного средства, который будет обозначен как Motorcycle.
 
-ORDER BY horsepower DESC NULLS LAST;
-```
+Велосипеды:
+Извлечь данные обо всех велосипедах, которые имеют:
 
-- Результат работы:
+Количество передач больше 18.
+Цену менее 4 тысяч долларов.
+В выводе должны быть указаны производитель (maker), номер модели (model), а также NULL для мощности и объема двигателя, так как эти характеристики не применимы для велосипедов. Тип транспортного средства будет обозначен как Bicycle.
+
+Сортировка:
+Результаты должны быть объединены в один набор данных и отсортированы по мощности в порядке убывания. Для велосипедов, у которых нет значения мощности, они будут располагаться внизу списка.
+
+- Результат работы решения:
 
   ![alt text](/image/db.1.2.jpg)
 
@@ -103,171 +128,41 @@ ORDER BY horsepower DESC NULLS LAST;
 
 - Задача 1:
 
-```sql
-SELECT
-    c.name AS car_name,
-    c.class AS car_class,
-    AVG(r.position) AS average_position,
-    COUNT(r.race) AS race_count
-FROM Cars c
-JOIN Results r ON c.name = r.car
-GROUP BY c.name, c.class
-ORDER BY average_position
-```
+Определить, какие автомобили из каждого класса имеют наименьшую среднюю позицию в гонках, и вывести информацию о каждом таком автомобиле для данного класса, включая его класс, среднюю позицию и количество гонок, в которых он участвовал. Также отсортировать результаты по средней позиции.
 
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.2.1.jpg)
 
 - Задача 2:
 
-```sql
-SELECT
-    c.name AS car_name,
-    c.class AS car_class,
-    AVG(r.position) AS average_position,
-    COUNT(r.race) AS race_count,
-	cl.country
-FROM Cars c
-JOIN Results r ON c.name = r.car
-JOIN Classes cl ON c.class = cl.class
-GROUP BY c.name, c.class, cl.country
-ORDER BY average_position ASC, c.name ASC
-LIMIT 1
-```
+Определить автомобиль, который имеет наименьшую среднюю позицию в гонках среди всех автомобилей, и вывести информацию об этом автомобиле, включая его класс, среднюю позицию, количество гонок, в которых он участвовал, и страну производства класса автомобиля. Если несколько автомобилей имеют одинаковую наименьшую среднюю позицию, выбрать один из них по алфавиту (по имени автомобиля).
 
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.2.2.jpg)
 
 - Задача 3:
 
-```sql
-WITH ClassAvg AS (
-    SELECT
-        c.class,
-        cl.country,
-        AVG(r.position) AS avg_class_position,
-        COUNT(DISTINCT r.race) AS total_races
-    FROM Cars c
-    JOIN Results r ON c.name = r.car
-    JOIN Classes cl ON c.class = cl.class
-    GROUP BY c.class, cl.country
-),
-MinAvg AS (
-    SELECT MIN(avg_class_position) AS min_avg FROM ClassAvg
-),
-CarStats AS (
-    SELECT
-        c.name,
-        c.class,
-        cl.country,
-        AVG(r.position) AS average_position,
-        COUNT(r.race) AS race_count
-    FROM Cars c
-    JOIN Results r ON c.name = r.car
-    JOIN Classes cl ON c.class = cl.class
-    GROUP BY c.name, c.class, cl.country
-)
-SELECT
-    cs.name AS car_name,
-    cs.class AS car_class,
-    cs.average_position,
-    cs.race_count,
-    cs.country AS car_country,
-    ca.total_races
-FROM CarStats cs
-JOIN ClassAvg ca ON cs.class = ca.class
-JOIN MinAvg ma ON ca.avg_class_position = ma.min_avg
-ORDER BY cs.class;
-```
+Определить классы автомобилей, которые имеют наименьшую среднюю позицию в гонках, и вывести информацию о каждом автомобиле из этих классов, включая его имя, среднюю позицию, количество гонок, в которых он участвовал, страну производства класса автомобиля, а также общее количество гонок, в которых участвовали автомобили этих классов. Если несколько классов имеют одинаковую среднюю позицию, выбрать все из них.
 
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.2.3.jpg)
 
 - Задача 4:
 
-```sql
-WITH ClassAvg AS (
-    SELECT
-        c.class,
-        AVG(r.position) AS avg_class_position,
-        COUNT(DISTINCT c.name) AS car_count
-    FROM Cars c
-    JOIN Results r ON c.name = r.car
-    GROUP BY c.class
-    HAVING COUNT(DISTINCT c.name) > 1
-),
-CarAvg AS (
-    SELECT
-        c.name,
-        c.class,
-        cl.country,
-        AVG(r.position) AS average_position,
-        COUNT(r.race) AS race_count
-    FROM Cars c
-    JOIN Results r ON c.name = r.car
-    JOIN Classes cl ON c.class = cl.class
-    GROUP BY c.name, c.class, cl.country
-)
-SELECT
-    ca.name AS car_name,
-    ca.class AS car_class,
-    ca.average_position,
-    ca.race_count,
-    ca.country AS car_country
-FROM CarAvg ca
-JOIN ClassAvg cla ON ca.class = cla.class
-WHERE ca.average_position < cla.avg_class_position
-ORDER BY ca.class, ca.average_position;
-```
+Определить, какие автомобили имеют среднюю позицию лучше (меньше) средней позиции всех автомобилей в своем классе (то есть автомобилей в классе должно быть минимум два, чтобы выбрать один из них). Вывести информацию об этих автомобилях, включая их имя, класс, среднюю позицию, количество гонок, в которых они участвовали, и страну производства класса автомобиля. Также отсортировать результаты по классу и затем по средней позиции в порядке возрастания.
 
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.2.4.jpg)
 
 - Задача 5:
 
-```sql
-WITH CarResults AS (
-    SELECT
-        c.name,
-        c.class,
-        AVG(r.position) AS average_position,
-        COUNT(r.race) AS race_count,
-        cl.country AS car_country
-    FROM Results r
-    JOIN Cars c ON r.car = c.name
-    JOIN Classes cl ON cl.class = c.class
-    GROUP BY c.name, c.class, cl.country
-    HAVING AVG(r.position) > 3.0
-),
+Определить, какие классы автомобилей имеют наибольшее количество автомобилей с низкой средней позицией (больше 3.0) и вывести информацию о каждом автомобиле из этих классов, включая его имя, класс, среднюю позицию, количество гонок, в которых он участвовал, страну производства класса автомобиля, а также общее количество гонок для каждого класса. Отсортировать результаты по количеству автомобилей с низкой средней позицией.
 
-ClassResults AS (
-    SELECT
-        c.class,
-        COUNT(DISTINCT c.name) AS car_count,
-        COUNT(DISTINCT r.race) AS total_races
-    FROM Results r
-    JOIN Cars c ON r.car = c.name
-    GROUP BY c.class
-)
-
-SELECT
-    cr.name AS car_name,
-    cr.class AS car_class,
-    cr.average_position,
-    cr.race_count,
-    cr.car_country,
-    cls.total_races,
-    cls.car_count AS low_position_count
-FROM CarResults cr
-JOIN ClassResults cls ON cls.class = cr.class
-ORDER BY low_position_count DESC;
-```
-
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.2.5.jpg)
 
@@ -275,110 +170,52 @@ ORDER BY low_position_count DESC;
 
 - Задача 1:
 
-```sql
-SELECT
-    c.name AS customer_name,
-    c.email AS customer_email,
-    c.phone AS customer_phone,
-    COUNT(b.ID_booking) AS total_bookings,
-    (
-        SELECT STRING_AGG(name, ', ' ORDER BY name)
-        FROM (
-            SELECT DISTINCT h.name
-            FROM Booking b_sub
-            JOIN Room r_sub ON b_sub.ID_room = r_sub.ID_room
-            JOIN Hotel h ON r_sub.ID_hotel = h.ID_hotel
-            WHERE b_sub.ID_customer = c.ID_customer
-        ) AS hotel_list
-    ) AS hotels,
-    AVG(b.check_out_date - b.check_in_date) AS average_stay_duration
-FROM Customer c
-JOIN Booking b ON c.ID_customer = b.ID_customer
-JOIN Room r ON b.ID_room = r.ID_room
-JOIN Hotel h ON r.ID_hotel = h.ID_hotel
-GROUP BY c.ID_customer
-HAVING COUNT(DISTINCT h.ID_hotel) > 1 AND COUNT(b.ID_booking) > 2
-ORDER BY total_bookings DESC;
-```
+Определить, какие клиенты сделали более двух бронирований в разных отелях, и вывести информацию о каждом таком клиенте, включая его имя, электронную почту, телефон, общее количество бронирований, а также список отелей, в которых они бронировали номера (объединенные в одно поле через запятую с помощью CONCAT). Также подсчитать среднюю длительность их пребывания (в днях) по всем бронированиям. Отсортировать результаты по количеству бронирований в порядке убывания.
 
-- Результат работы:
+- Результат работы решения:
 
   ![alt text](/image/db.3.1.jpg)
 
 - Задача 2:
 
-```sql
-SELECT
-    c.ID_customer AS ID_customer,
-    c.name AS name,
-    COUNT(b.ID_booking) AS total_bookings,
-    SUM(r.price * (b.check_out_date - b.check_in_date)) AS total_spent,
-    COUNT(DISTINCT h.ID_hotel) AS unique_hotels
-FROM Customer c
-JOIN Booking b ON c.ID_customer = b.ID_customer
-JOIN Room r ON b.ID_room = r.ID_room
-JOIN Hotel h ON r.ID_hotel = h.ID_hotel
-GROUP BY c.ID_customer
-HAVING COUNT(DISTINCT h.ID_hotel) > 1
-   AND COUNT(b.ID_booking) > 2
-   AND SUM(r.price * (b.check_out_date - b.check_in_date)) > 500
-ORDER BY total_spent ASC;
-```
+Необходимо провести анализ клиентов, которые сделали более двух бронирований в разных отелях и потратили более 500 долларов на свои бронирования. Для этого:
 
-- Результат работы:
+Определить клиентов, которые сделали более двух бронирований и забронировали номера в более чем одном отеле. Вывести для каждого такого клиента следующие данные: ID_customer, имя, общее количество бронирований, общее количество уникальных отелей, в которых они бронировали номера, и общую сумму, потраченную на бронирования.
+Также определить клиентов, которые потратили более 500 долларов на бронирования, и вывести для них ID_customer, имя, общую сумму, потраченную на бронирования, и общее количество бронирований.
+В результате объединить данные из первых двух пунктов, чтобы получить список клиентов, которые соответствуют условиям обоих запросов. Отобразить поля: ID_customer, имя, общее количество бронирований, общую сумму, потраченную на бронирования, и общее количество уникальных отелей.
+Результаты отсортировать по общей сумме, потраченной клиентами, в порядке возрастания.
+
+- Результат работы решения:
 
   ![alt text](/image/db.3.2.jpg)
 
 - Задача 3:
 
-```sql
-WITH HotelCategories AS (
-    SELECT  h.ID_hotel, h.name AS hotel_name,
-        CASE
-            WHEN AVG(r.price) < 175 THEN 'Дешевый'
-            WHEN AVG(r.price) BETWEEN 175 AND 300 THEN 'Средний'
-            ELSE 'Дорогой'
-        END AS category
-    FROM Hotel h
-    JOIN Room r ON h.ID_hotel = r.ID_hotel
-    GROUP BY  h.ID_hotel
-)
-SELECT
-    c.ID_customer,
-    c.name,
-    CASE
-        WHEN EXISTS (SELECT 1 FROM Booking b JOIN Room r
-        ON b.ID_room = r.ID_room JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-        WHERE b.ID_customer = c.ID_customer AND hc.category = 'Дорогой') THEN 'Дорогой'
-        WHEN EXISTS (SELECT 1 FROM Booking b JOIN Room r
-        ON b.ID_room = r.ID_room JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-        WHERE b.ID_customer = c.ID_customer AND hc.category = 'Средний') THEN 'Средний'
-        WHEN EXISTS (SELECT 1 FROM Booking b JOIN Room r
-        ON b.ID_room = r.ID_room JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-        WHERE b.ID_customer = c.ID_customer AND hc.category = 'Дешевый') THEN 'Дешевый'
-    END AS preferred_hotel_type,
-    STRING_AGG(DISTINCT h.name, ', ' ORDER BY h.name) AS visited_hotels
-FROM Customer c
-JOIN Booking b ON c.ID_customer = b.ID_customer
-JOIN Room r ON b.ID_room = r.ID_room
-JOIN Hotel h ON r.ID_hotel = h.ID_hotel
-JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-GROUP BY c.ID_customer, c.name
-ORDER BY
-    CASE
-        WHEN EXISTS (SELECT 1 FROM Booking b JOIN Room r
-        ON b.ID_room = r.ID_room JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-        WHERE b.ID_customer = c.ID_customer AND hc.category = 'Дорогой') THEN 3
-        WHEN EXISTS (SELECT 1 FROM Booking b JOIN Room r
-        ON b.ID_room = r.ID_room JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-        WHERE b.ID_customer = c.ID_customer AND hc.category = 'Средний') THEN 2
-        WHEN EXISTS (SELECT 1 FROM Booking b JOIN Room r
-        ON b.ID_room = r.ID_room JOIN HotelCategories hc ON r.ID_hotel = hc.ID_hotel
-        WHERE b.ID_customer = c.ID_customer AND hc.category = 'Дешевый') THEN 1
-    END;
-```
+Вам необходимо провести анализ данных о бронированиях в отелях и определить предпочтения клиентов по типу отелей. Для этого выполните следующие шаги:
 
-- Результат работы:
+Категоризация отелей.
+Определите категорию каждого отеля на основе средней стоимости номера:
+
+«Дешевый»: средняя стоимость менее 175 долларов.
+«Средний»: средняя стоимость от 175 до 300 долларов.
+«Дорогой»: средняя стоимость более 300 долларов.
+Анализ предпочтений клиентов.
+Для каждого клиента определите предпочитаемый тип отеля на основании условия ниже:
+
+Если у клиента есть хотя бы один «дорогой» отель, присвойте ему категорию «дорогой».
+Если у клиента нет «дорогих» отелей, но есть хотя бы один «средний», присвойте ему категорию «средний».
+Если у клиента нет «дорогих» и «средних» отелей, но есть «дешевые», присвойте ему категорию предпочитаемых отелей «дешевый».
+Вывод информации.
+Выведите для каждого клиента следующую информацию:
+
+ID_customer: уникальный идентификатор клиента.
+name: имя клиента.
+preferred_hotel_type: предпочитаемый тип отеля.
+visited_hotels: список уникальных отелей, которые посетил клиент.
+Сортировка результатов.
+Отсортируйте клиентов так, чтобы сначала шли клиенты с «дешевыми» отелями, затем со «средними» и в конце — с «дорогими».
+
+- Результат работы решения:
   ![alt text](/image/db.3.3.jpg)
 
 ## База данных 4. Структура организации
@@ -400,19 +237,5 @@ ORDER BY
 - Задача 3:
 
 ```sql
-
-```
-
-- Задача 4:
-
-```sql
-
-
-```
-
-- Задача 5:
-
-```sql
-
 
 ```
